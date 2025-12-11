@@ -10,12 +10,21 @@ import {
   CheckCircle2,
   ChevronRight,
   ArrowRight,
+  AlertTriangle,
+  Clock,
 } from 'lucide-react';
 import StatCard from '@/components/StatCard';
 import CourseSelector from '@/components/CourseSelector';
 import SearchFilter from '@/components/SearchFilter';
 import LearnerCard from '@/components/LearnerCard';
 import SupportSection from '@/components/SupportSection';
+import AlertsPanel from '@/components/AlertsPanel';
+import DeadlinesWidget from '@/components/DeadlinesWidget';
+import AtRiskLearnersPanel from '@/components/AtRiskLearnersPanel';
+import QuickActionsPanel from '@/components/QuickActionsPanel';
+import TodayScheduleWidget from '@/components/TodayScheduleWidget';
+import InsightsPanel from '@/components/InsightsPanel';
+import BatchOverviewPanel from '@/components/BatchOverviewPanel';
 import {
   dashboardStats,
   learners,
@@ -24,6 +33,11 @@ import {
   customerSuccessManager,
   supportDesk,
   webinars,
+  alerts,
+  deadlines,
+  batches,
+  learnerInsights,
+  scheduleSessions,
 } from '@/data/mockData';
 import { exportToCSV } from '@/lib/utils';
 import Link from 'next/link';
@@ -43,11 +57,22 @@ export default function Dashboard() {
     ? filteredLearners
     : filteredLearners.slice(0, 5);
 
+  // Calculate enhanced stats
+  const atRiskCount = learners.filter(
+    (l) => l.riskLevel === 'high' || l.riskLevel === 'critical'
+  ).length;
+  const activeAlertsCount = alerts.filter((a) => !a.isDismissed).length;
+  const avgEngagement = Math.round(
+    learners.reduce((sum, l) => sum + l.engagementScore, 0) / learners.length
+  );
+
   const handleExport = () => {
     const exportData = filteredLearners.map((learner) => ({
       Name: learner.name,
       Email: learner.email,
       Progress: `${learner.progress}%`,
+      'Risk Level': learner.riskLevel,
+      'Engagement Score': learner.engagementScore,
       'Voucher Redeemed': learner.voucherRedeemed,
       'Modules Completed': `${learner.details.modulesCompleted}/${learner.details.totalModules}`,
       'Videos Watched': `${learner.details.videosWatched}/${learner.details.totalVideos}`,
@@ -56,6 +81,8 @@ export default function Dashboard() {
       'Questions Attempted': `${learner.details.questionsAttempted}/${learner.details.totalQuestions}`,
       'Correct Answers': learner.details.correctAnswers,
       'Incorrect Answers': learner.details.incorrectAnswers,
+      'Last Active': learner.lastActiveDate,
+      'Certification Status': learner.certificationStatus,
     }));
     exportToCSV(exportData, `learners-${selectedCourse?.code || 'all'}`);
   };
@@ -79,8 +106,11 @@ export default function Dashboard() {
         </Link>
       </div>
 
+      {/* Quick Actions */}
+      <QuickActionsPanel />
+
       {/* Stats Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-4">
         <StatCard
           title="Total Learners"
           value={dashboardStats.totalLearners}
@@ -119,14 +149,44 @@ export default function Dashboard() {
           iconColor="text-cyan-600"
         />
         <StatCard
-          title="Completed This Month"
-          value={dashboardStats.completedThisMonth}
+          title="At-Risk Learners"
+          value={atRiskCount}
+          icon={AlertTriangle}
+          iconBg="bg-red-100"
+          iconColor="text-red-600"
+        />
+        <StatCard
+          title="Active Alerts"
+          value={activeAlertsCount}
+          icon={Clock}
+          iconBg="bg-orange-100"
+          iconColor="text-orange-600"
+        />
+        <StatCard
+          title="Avg Engagement"
+          value={`${avgEngagement}%`}
           icon={CheckCircle2}
           trend={{ value: 8, isPositive: true }}
           iconBg="bg-green-100"
           iconColor="text-green-600"
         />
       </div>
+
+      {/* Critical Insights Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <AlertsPanel alerts={alerts} maxVisible={4} />
+        <AtRiskLearnersPanel learners={learners} maxVisible={3} />
+        <DeadlinesWidget deadlines={deadlines} maxVisible={4} />
+      </div>
+
+      {/* Schedule and Batches Row */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <TodayScheduleWidget sessions={scheduleSessions} />
+        <BatchOverviewPanel batches={batches} maxVisible={3} />
+      </div>
+
+      {/* AI Insights */}
+      <InsightsPanel insights={learnerInsights} maxVisible={4} />
 
       {/* Course Selector & Export */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
