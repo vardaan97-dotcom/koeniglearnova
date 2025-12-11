@@ -1,65 +1,208 @@
-import Image from "next/image";
+'use client';
 
-export default function Home() {
+import React, { useState, useMemo } from 'react';
+import {
+  Users,
+  BookOpen,
+  TrendingUp,
+  Award,
+  Calendar,
+  CheckCircle2,
+  ChevronRight,
+  ArrowRight,
+} from 'lucide-react';
+import StatCard from '@/components/StatCard';
+import CourseSelector from '@/components/CourseSelector';
+import SearchFilter from '@/components/SearchFilter';
+import LearnerCard from '@/components/LearnerCard';
+import SupportSection from '@/components/SupportSection';
+import {
+  dashboardStats,
+  learners,
+  courses,
+  trainers,
+  customerSuccessManager,
+  supportDesk,
+  webinars,
+} from '@/data/mockData';
+import { exportToCSV } from '@/lib/utils';
+import Link from 'next/link';
+
+export default function Dashboard() {
+  const [selectedCourse, setSelectedCourse] = useState(courses[0]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showAllLearners, setShowAllLearners] = useState(false);
+
+  const filteredLearners = useMemo(() => {
+    return learners.filter((learner) =>
+      learner.name.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+  }, [searchQuery]);
+
+  const displayedLearners = showAllLearners
+    ? filteredLearners
+    : filteredLearners.slice(0, 5);
+
+  const handleExport = () => {
+    const exportData = filteredLearners.map((learner) => ({
+      Name: learner.name,
+      Email: learner.email,
+      Progress: `${learner.progress}%`,
+      'Voucher Redeemed': learner.voucherRedeemed,
+      'Modules Completed': `${learner.details.modulesCompleted}/${learner.details.totalModules}`,
+      'Videos Watched': `${learner.details.videosWatched}/${learner.details.totalVideos}`,
+      'Time Watched': learner.details.timeWatched,
+      'Average Score': `${learner.details.averageScore}%`,
+      'Questions Attempted': `${learner.details.questionsAttempted}/${learner.details.totalQuestions}`,
+      'Correct Answers': learner.details.correctAnswers,
+      'Incorrect Answers': learner.details.incorrectAnswers,
+    }));
+    exportToCSV(exportData, `learners-${selectedCourse?.code || 'all'}`);
+  };
+
   return (
-    <div className="flex min-h-screen items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex min-h-screen w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <div className="max-w-7xl mx-auto space-y-8">
+      {/* Page Header */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Training Dashboard</h1>
+          <p className="text-gray-500 mt-1">
+            Monitor learner progress and manage training activities
           </p>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+        <Link
+          href="/reports"
+          className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-cyan-600 hover:text-cyan-700"
+        >
+          View Full Reports
+          <ArrowRight className="w-4 h-4" />
+        </Link>
+      </div>
+
+      {/* Stats Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-4">
+        <StatCard
+          title="Total Learners"
+          value={dashboardStats.totalLearners}
+          icon={Users}
+          trend={{ value: 12, isPositive: true }}
+          iconBg="bg-blue-100"
+          iconColor="text-blue-600"
+        />
+        <StatCard
+          title="Active Courses"
+          value={dashboardStats.activeCourses}
+          icon={BookOpen}
+          iconBg="bg-purple-100"
+          iconColor="text-purple-600"
+        />
+        <StatCard
+          title="Avg Completion"
+          value={`${dashboardStats.averageCompletion}%`}
+          icon={TrendingUp}
+          trend={{ value: 5, isPositive: true }}
+          iconBg="bg-emerald-100"
+          iconColor="text-emerald-600"
+        />
+        <StatCard
+          title="Vouchers Redeemed"
+          value={dashboardStats.vouchersRedeemed}
+          icon={Award}
+          iconBg="bg-amber-100"
+          iconColor="text-amber-600"
+        />
+        <StatCard
+          title="Upcoming Classes"
+          value={dashboardStats.upcomingClasses}
+          icon={Calendar}
+          iconBg="bg-cyan-100"
+          iconColor="text-cyan-600"
+        />
+        <StatCard
+          title="Completed This Month"
+          value={dashboardStats.completedThisMonth}
+          icon={CheckCircle2}
+          trend={{ value: 8, isPositive: true }}
+          iconBg="bg-green-100"
+          iconColor="text-green-600"
+        />
+      </div>
+
+      {/* Course Selector & Export */}
+      <div className="bg-white rounded-xl border border-gray-200 p-6">
+        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+          <CourseSelector
+            courses={courses}
+            selectedCourse={selectedCourse}
+            onSelect={setSelectedCourse}
+          />
+          <div className="flex items-center gap-2 text-sm text-gray-500">
+            <span className="font-medium text-gray-700">Export Learner Data</span>
+          </div>
         </div>
-      </main>
+      </div>
+
+      {/* Search & Filter */}
+      <SearchFilter
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onExport={handleExport}
+      />
+
+      {/* Learners List */}
+      <div className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-gray-800">
+            Learners ({filteredLearners.length})
+          </h2>
+          <div className="hidden sm:flex items-center gap-8 text-sm text-gray-500">
+            <span className="flex items-center gap-2">
+              <Users className="w-4 h-4 text-cyan-600" />
+              Learner Name
+            </span>
+            <span className="flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-cyan-600" />
+              Overall Progress
+            </span>
+            <span className="flex items-center gap-2">
+              <Award className="w-4 h-4 text-cyan-600" />
+              Voucher Redeemed
+            </span>
+          </div>
+        </div>
+
+        <div className="space-y-3">
+          {displayedLearners.map((learner) => (
+            <LearnerCard key={learner.id} learner={learner} />
+          ))}
+        </div>
+
+        {filteredLearners.length > 5 && (
+          <div className="flex justify-center pt-4">
+            <button
+              onClick={() => setShowAllLearners(!showAllLearners)}
+              className="flex items-center gap-2 px-6 py-2.5 text-cyan-600 font-medium hover:bg-cyan-50 rounded-full transition-colors"
+            >
+              {showAllLearners
+                ? 'Show Less'
+                : `View ${filteredLearners.length - 5} more learners`}
+              <ChevronRight
+                className={`w-4 h-4 transition-transform ${
+                  showAllLearners ? 'rotate-90' : ''
+                }`}
+              />
+            </button>
+          </div>
+        )}
+      </div>
+
+      {/* Support Section */}
+      <SupportSection
+        trainer={trainers[0]}
+        csm={customerSuccessManager}
+        supportDesk={supportDesk}
+        webinars={webinars}
+      />
     </div>
   );
 }

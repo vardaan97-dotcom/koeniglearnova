@@ -1,36 +1,135 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Koenig LMS - Learning Management System
+
+A modern, responsive Learning Management System dashboard for Koenig Solutions, built with Next.js 16, React 19, and TailwindCSS 4.
+
+## Features
+
+- **Dashboard Overview**: Real-time statistics and KPIs for training coordinators
+- **Learner Management**: Track individual learner progress with expandable detail cards
+- **Course Management**: Browse and manage Microsoft certified training courses
+- **Schedule Management**: View and manage training sessions, webinars, and exams
+- **Trainer Directory**: Access trainer profiles and contact information
+- **Support Center**: Quick access to customer success managers and support resources
+- **Reports & Analytics**: Comprehensive reporting on learner progress and course performance
+- **Export Functionality**: Download learner data as CSV/Excel
+
+## Tech Stack
+
+- **Framework**: Next.js 16 (App Router)
+- **UI Library**: React 19
+- **Styling**: TailwindCSS 4
+- **Icons**: Lucide React
+- **Components**: Radix UI primitives
+- **Language**: TypeScript
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- Node.js 18.17.0 or higher
+- npm, yarn, or pnpm
+
+### Installation
 
 ```bash
+# Clone the repository
+git clone <repository-url>
+cd koenig-lms
+
+# Install dependencies
+npm install
+
+# Run development server
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Build for Production
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+```bash
+npm run build
+npm start
+```
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
+```
+koenig-lms/
+├── src/
+│   ├── app/                 # Next.js app router pages
+│   │   ├── courses/        # Course management
+│   │   ├── learners/       # Learner management
+│   │   ├── reports/        # Analytics & reports
+│   │   ├── schedule/       # Schedule management
+│   │   ├── settings/       # User settings
+│   │   ├── support/        # Support center
+│   │   ├── trainers/       # Trainer directory
+│   │   ├── layout.tsx      # Root layout
+│   │   ├── page.tsx        # Dashboard home
+│   │   └── globals.css     # Global styles
+│   ├── components/         # Reusable UI components
+│   ├── data/               # Mock data
+│   ├── lib/                # Utility functions
+│   └── types/              # TypeScript type definitions
+├── public/                 # Static assets
+├── package.json
+└── README.md
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Key Components
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Header**: Navigation with user profile and mobile menu
+- **Sidebar**: Main navigation with active state indicators
+- **LearnerCard**: Expandable learner progress cards
+- **CourseSelector**: Course dropdown with Microsoft badge
+- **ProgressBar**: Animated linear progress indicator
+- **CircularProgress**: SVG circular progress charts
+- **StatCard**: Dashboard statistics cards
+- **SupportSection**: Trainer and CSM contact info
 
-## Deploy on Vercel
+## Deployment
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Deploy to Vercel
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The easiest way to deploy this application:
+
+1. Push your code to GitHub
+2. Go to [Vercel](https://vercel.com/new)
+3. Import your repository
+4. Deploy with one click
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
+
+### Deploy to Other Platforms
+
+The application can be deployed to any platform that supports Node.js:
+
+```bash
+# Build the application
+npm run build
+
+# Start production server
+npm start
+```
+
+## Color Palette
+
+The design follows Koenig Solutions' brand guidelines:
+
+- **Primary**: `#0891b2` (Cyan 600)
+- **Primary Dark**: `#0e7490` (Cyan 700)
+- **Accent**: `#10b981` (Emerald 500)
+- **Background**: `#f0f9ff` (Sky 50)
+- **Card Background**: `#ffffff`
+
+## Browser Support
+
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+
+## License
+
+Copyright 2025 Koenig Solutions. All rights reserved.
