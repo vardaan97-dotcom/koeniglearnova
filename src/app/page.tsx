@@ -107,10 +107,12 @@ export default function Dashboard() {
       </div>
 
       {/* Quick Actions */}
-      <QuickActionsPanel />
+      <div data-tour="quick-actions">
+        <QuickActionsPanel />
+      </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-4">
+      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-8 gap-4" data-tour="stats-overview">
         <StatCard
           title="Total Learners"
           value={dashboardStats.totalLearners}
@@ -174,19 +176,31 @@ export default function Dashboard() {
 
       {/* Critical Insights Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <AlertsPanel alerts={alerts} maxVisible={4} />
-        <AtRiskLearnersPanel learners={learners} maxVisible={3} />
-        <DeadlinesWidget deadlines={deadlines} maxVisible={4} />
+        <div data-tour="alerts-panel">
+          <AlertsPanel alerts={alerts} maxVisible={4} />
+        </div>
+        <div data-tour="at-risk-learners">
+          <AtRiskLearnersPanel learners={learners} maxVisible={3} />
+        </div>
+        <div data-tour="deadlines-widget">
+          <DeadlinesWidget deadlines={deadlines} maxVisible={4} />
+        </div>
       </div>
 
       {/* Schedule and Batches Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <TodayScheduleWidget sessions={scheduleSessions} />
-        <BatchOverviewPanel batches={batches} maxVisible={3} />
+        <div data-tour="schedule-widget">
+          <TodayScheduleWidget sessions={scheduleSessions} />
+        </div>
+        <div data-tour="batch-overview">
+          <BatchOverviewPanel batches={batches} maxVisible={3} />
+        </div>
       </div>
 
       {/* AI Insights */}
-      <InsightsPanel insights={learnerInsights} maxVisible={4} />
+      <div data-tour="ai-insights">
+        <InsightsPanel insights={learnerInsights} maxVisible={4} />
+      </div>
 
       {/* Course Selector & Export */}
       <div className="bg-white rounded-xl border border-gray-200 p-6">
@@ -210,7 +224,7 @@ export default function Dashboard() {
       />
 
       {/* Learners List */}
-      <div className="space-y-4">
+      <div className="space-y-4" data-tour="learner-list">
         <div className="flex items-center justify-between">
           <h2 className="text-lg font-semibold text-gray-800">
             Learners ({filteredLearners.length})
@@ -257,12 +271,14 @@ export default function Dashboard() {
       </div>
 
       {/* Support Section */}
-      <SupportSection
-        trainer={trainers[0]}
-        csm={customerSuccessManager}
-        supportDesk={supportDesk}
-        webinars={webinars}
-      />
+      <div data-tour="support-section">
+        <SupportSection
+          trainer={trainers[0]}
+          csm={customerSuccessManager}
+          supportDesk={supportDesk}
+          webinars={webinars}
+        />
+      </div>
     </div>
   );
 }

@@ -14,12 +14,15 @@ import {
   Bell,
   Menu,
   X,
+  HelpCircle,
 } from 'lucide-react';
 import { currentUser } from '@/data/mockData';
+import { useTour } from './OnboardingTour';
 
 export default function Header() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const { startTour } = useTour();
 
   return (
     <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
@@ -107,6 +110,16 @@ export default function Header() {
                     <Settings className="w-4 h-4" />
                     Settings
                   </Link>
+                  <button
+                    onClick={() => {
+                      startTour();
+                      setIsProfileOpen(false);
+                    }}
+                    className="flex items-center gap-3 px-4 py-2 text-sm text-cyan-600 hover:bg-cyan-50 w-full"
+                  >
+                    <HelpCircle className="w-4 h-4" />
+                    Take Dashboard Tour
+                  </button>
                   <hr className="my-2" />
                   <button className="flex items-center gap-3 px-4 py-2 text-sm text-red-600 hover:bg-red-50 w-full">
                     <LogOut className="w-4 h-4" />
